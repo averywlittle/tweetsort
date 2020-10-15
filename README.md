@@ -1,4 +1,4 @@
-# tweetsort
+# TweetSort
 A tool to sort through a user's tweets.
 
 The reason I wish this existed is because I love lurking through the top of all time on Reddit. I want to provide that experience on Twitter.
