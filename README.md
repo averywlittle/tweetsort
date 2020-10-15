@@ -8,7 +8,6 @@ valuable input from the past. Search is great if you know the syntax for command
 I've found that users that thread a lot will resurface their own valuable tweets. What about users that don't do that? This tool seeks to enable people to seek out valuable past
 tweets from people they want to learn more from.
 
-Pure html, css, and js. Wanted experience getting data from an API, using css fundamentals instead of a framework/library, using js with browser functions rather than a framework.
 I'm hoping to host this and have it available for people.
 
 Challenges:
