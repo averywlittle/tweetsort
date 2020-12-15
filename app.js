@@ -2,6 +2,7 @@ require('dotenv').config()
 const express = require('express')
 const cors = require('cors')
 const Twitter = require('twitter')
+const { response } = require('express')
 const app = express()
 
 app.use(cors())
@@ -11,8 +12,8 @@ app.use(express.json())
 const client = new Twitter({
     consumer_key: process.env.API_KEY,
     consumer_secret: process.env.API_KEY_SECRET,
-    access_token_key: process.env.access_token_key,
-    access_token_secret: process.env.access_token_secret,
+    access_token_key: process.env.ACCESS_TOKEN,
+    access_token_secret: process.env.ACCESS_TOKEN_SECRET,
     bearer_token: process.env.BEARER_TOKEN
 })
 
@@ -22,11 +23,11 @@ let params = {
     user_id: user_name,
     screen_name: user_name,
     include_entities: false,
-    trim_user: true,
     count: 200
 }
 
 const getTweets = async (queryParams) => {
+
     let allTweets = []
     let newTweets = await client.get('statuses/user_timeline', queryParams)
         .then(tweets => {
@@ -49,7 +50,7 @@ const getTweets = async (queryParams) => {
         // The next request is aligned using the previous request's oldest tweet id
         newTweets = await client.get('statuses/user_timeline', { ...params, max_id: oldestTweetID })
             .then(tweets => {
-                console.log('new tweets length', newTweets.length)
+                console.log('new tweets length', tweets.length)
                 let tweetTexts = tweets.map(tweet => tweet.text)
                 console.log('looped tweets: ', tweetTexts)
                 return tweets
@@ -65,7 +66,8 @@ const getTweets = async (queryParams) => {
         allTweets = allTweets.concat(newTweets)
         
         // Adjust lowest ID to new lowest id in newTweets if available
-        oldestTweetID = newTweets.reduce((accumulator, currentValue) => currentValue.id < accumulator ? currentValue.id : accumulator.id)
+        // No initial value because we assume the newTweets
+        oldestTweetID = newTweets.reduce((oldestID, currentTweet) => currentTweet.id < oldestID ? currentTweet.id : oldestID.id)
 
         console.log(`${allTweets.length} tweets downloaded so far`)
     }
@@ -77,6 +79,10 @@ const getTweets = async (queryParams) => {
 getTweets(params)
     .then(tweets => console.log(`fetch success from user ${user_name}, number of tweets: ${tweets.length}`))
     .catch(error => console.log(error))
+
+const mergeSort = (unsortedArray) => {
+
+}
 
 
 
