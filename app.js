@@ -22,63 +22,61 @@ let params = {
     user_id: user_name,
     screen_name: user_name,
     include_entities: false,
-    include_rts: false,
+    trim_user: true,
     count: 200
 }
 
 const getTweets = async (queryParams) => {
-    return await client.get('statuses/user_timeline', queryParams)
+    let allTweets = []
+    let newTweets = await client.get('statuses/user_timeline', queryParams)
+        .then(tweets => {
+            if (tweets !== undefined) {
+                return tweets
+            }
+        })
+        .catch(error => {
+            console.log('ERROR', error)
+        })
 
+    allTweets = allTweets.concat(newTweets)
+    console.log(`first tweets length ${allTweets.length}`)
+
+    let oldestTweetID = allTweets[allTweets.length-1].id
+
+    while (newTweets.length > 0) {
+        console.log(`getting tweets before ${oldestTweetID}`)
+
+        // The next request is aligned using the previous request's oldest tweet id
+        newTweets = await client.get('statuses/user_timeline', { ...params, max_id: oldestTweetID })
+            .then(tweets => {
+                console.log('new tweets length', newTweets.length)
+                let tweetTexts = tweets.map(tweet => tweet.text)
+                console.log('looped tweets: ', tweetTexts)
+                return tweets
+            })
+            .catch(error => {
+                console.log('ERROR', error)
+            })
+
+        if (newTweets.length <= 1) {
+            break
+        }
+
+        allTweets = allTweets.concat(newTweets)
+        
+        // Adjust lowest ID to new lowest id in newTweets if available
+        oldestTweetID = newTweets.reduce((accumulator, currentValue) => currentValue.id < accumulator ? currentValue.id : accumulator.id)
+
+        console.log(`${allTweets.length} tweets downloaded so far`)
+    }
+
+    console.log('all tweets length =', allTweets.length)
+    return allTweets
 }
 
-
-let allTweets = []
-
-let newTweets = getTweets(params)
-    .then(tweets => {
-        console.log('first get', tweets.length)
-        return tweets
-    })
-    .catch(error => {
-        console.log('ERROR', error)
-    })
-
-allTweets = allTweets.concat(newTweets)
-
-console.log('first batch of tweets', newTweets.length)
-
-// let oldestTweetID = allTweets[allTweets.length-1].id - 1
-
-// while (newTweets.length > 0) {
-//     console.log(`getting tweets before ${oldestTweetID}`)
-
-//     // The next request is aligned using the previous request's oldest tweet id
-//     newTweets = client.get('statuses/user_timeline', { ...params, max_id: oldestTweetID })
-//         .then(tweets => {
-//             return tweets
-//         })
-//         .catch(error => {
-//             console.log('ERROR', error)
-//         })
-    
-//     // , function(error, tweets, response) {
-//     //                 console.log('hit b')
-//     //                 if(!error) {
-//     //                     console.log('tweets length', tweets.length)
-//     //                     return tweets
-//     //                 }
-//     //             })
-
-//     allTweets = allTweets.concat(newTweets)
-
-//     oldestTweetID = allTweets[allTweets.length-1].id - 1
-
-//     console.log(`${allTweets.length} tweets downloaded so far`)
-// }
-
-// console.log('all tweets length =', allTweets.length)
-
-
+getTweets(params)
+    .then(tweets => console.log(`fetch success from user ${user_name}, number of tweets: ${tweets.length}`))
+    .catch(error => console.log(error))
 
 
 
