@@ -1,0 +1,34 @@
+{
+  "name": "tweetsort",
+  "version": "1.0.0",
+  "description": "A tool to sort through a user's tweets",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node app.js",
+    "dev": "nodemon app.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/averywlittle/tweetsort.git"
+  },
+  "keywords": [
+    "tweet",
+    "sort",
+    "twitter",
+    "top"
+  ],
+  "author": "@averywlittle",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/averywlittle/tweetsort/issues"
+  },
+  "homepage": "https://tweetsort.io",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^8.2.0",
+    "express": "^4.17.1",
+    "nodemon": "^2.0.6",
+    "twitter": "^1.7.1"
+  }
+}
