@@ -18,6 +18,8 @@ const client = new Twitter({
 })
 
 let user_name = 'averywlittle'
+let sort_dir = 'descending'
+let sort_focus = 'favs'
 
 let params = {
     user_id: user_name,
@@ -76,13 +78,56 @@ const getTweets = async (queryParams) => {
     return allTweets
 }
 
-getTweets(params)
-    .then(tweets => console.log(`fetch success from user ${user_name}, number of tweets: ${tweets.length}`))
-    .catch(error => console.log(error))
-
 const mergeSort = (unsortedArray) => {
+    // No need to sort the array if the array only has one element or empty
+    if (unsortedArray.length <= 1) {
+        return unsortedArray
+    }
+    // In order to divide the array in half, we need to figure out the middle
+    const middle = Math.floor(unsortedArray.length / 2)
 
+    // This is where we will be dividing the array into left and right
+    const left = unsortedArray.slice(0, middle)
+    const right = unsortedArray.slice(middle)
+
+    // Using recursion to combine the left and right
+    return merge(
+        mergeSort(left), mergeSort(right)
+    )
 }
+
+const merge = (left, right) => {
+    let resultArray = [], leftIndex = 0, rightIndex = 0
+
+    // Concatenate values to result array in order
+    while (leftIndex < left.length && rightIndex < right.length) {
+        if (left[leftIndex].favorite_count > right[rightIndex].favorite_count) {
+            // [ ] Check for duplicates, retweets without text here
+            resultArray.push(left[leftIndex]);
+            leftIndex++; // move left array cursor
+          } else {
+            // [ ] Check for duplicates, retweets without text here
+            resultArray.push(right[rightIndex]);
+            rightIndex++; // move right array cursor
+          }
+    }
+
+    // Capture possible leftover elements
+    return resultArray
+            .concat(left.slice(leftIndex))
+            .concat(right.slice(rightIndex))
+}
+
+
+getTweets(params)
+    .then(tweets => {
+        console.log(`fetch success from user ${user_name}, number of tweets: ${tweets.length}`)
+        let sortedArray = mergeSort(tweets)
+        console.log('First:', sortedArray[0])
+        console.log('Second:', sortedArray[1])
+        console.log('Third:', sortedArray[2])
+    })
+    .catch(error => console.log(error))
 
 
 
