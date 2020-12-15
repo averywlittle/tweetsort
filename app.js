@@ -5,6 +5,8 @@ const Twitter = require('twitter')
 const app = express()
 
 app.use(cors())
+app.use(express.static('build'))
+app.use(express.json())
 
 const client = new Twitter({
     consumer_key: process.env.API_KEY,
@@ -24,12 +26,31 @@ let params = {
 
 client.get('statuses/user_timeline', params, function(error, tweets, response) {
     if(!error) {
-        console.log('tweets', tweets)
+        console.log('tweets length', tweets.length)
     }
 })
 
+const getTweets = (queryParams) => {
+
+    client.get('statuses/user_timeline', queryParams, function(error, tweets, response) {
+        return response.JSON(tweets)
+    })
+
+
+}
+
 app.get('/', (request, response) => {
     response.send(`Hello world`)
+})
+
+app.get('/api/query', (request, response) => {
+    getTweets(request.body.queryParams)
+        .then(result => {
+
+        })
+        .catch(error => {
+            console.log('error fetching user data', error)
+        })
 })
 
 
