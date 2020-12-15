@@ -21,23 +21,70 @@ let user_name = 'averywlittle'
 let params = {
     user_id: user_name,
     screen_name: user_name,
-    include_entities: false
+    include_entities: false,
+    include_rts: false,
+    count: 200
 }
 
-client.get('statuses/user_timeline', params, function(error, tweets, response) {
-    if(!error) {
-        console.log('tweets length', tweets.length)
-    }
-})
+const getTweets = async (queryParams) => {
+    return await client.get('statuses/user_timeline', queryParams)
 
-const getTweets = (queryParams) => {
+}
 
-    client.get('statuses/user_timeline', queryParams, function(error, tweets, response) {
-        return response.JSON(tweets)
+
+let allTweets = []
+
+let newTweets = getTweets(params)
+    .then(tweets => {
+        console.log('first get', tweets.length)
+        return tweets
+    })
+    .catch(error => {
+        console.log('ERROR', error)
     })
 
+allTweets = allTweets.concat(newTweets)
 
-}
+console.log('first batch of tweets', newTweets.length)
+
+// let oldestTweetID = allTweets[allTweets.length-1].id - 1
+
+// while (newTweets.length > 0) {
+//     console.log(`getting tweets before ${oldestTweetID}`)
+
+//     // The next request is aligned using the previous request's oldest tweet id
+//     newTweets = client.get('statuses/user_timeline', { ...params, max_id: oldestTweetID })
+//         .then(tweets => {
+//             return tweets
+//         })
+//         .catch(error => {
+//             console.log('ERROR', error)
+//         })
+    
+//     // , function(error, tweets, response) {
+//     //                 console.log('hit b')
+//     //                 if(!error) {
+//     //                     console.log('tweets length', tweets.length)
+//     //                     return tweets
+//     //                 }
+//     //             })
+
+//     allTweets = allTweets.concat(newTweets)
+
+//     oldestTweetID = allTweets[allTweets.length-1].id - 1
+
+//     console.log(`${allTweets.length} tweets downloaded so far`)
+// }
+
+// console.log('all tweets length =', allTweets.length)
+
+
+
+
+
+//////////
+
+
 
 app.get('/', (request, response) => {
     response.send(`Hello world`)
