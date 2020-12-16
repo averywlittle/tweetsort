@@ -2,12 +2,11 @@ require('dotenv').config()
 const express = require('express')
 const cors = require('cors')
 const Twitter = require('twitter')
-const { response } = require('express')
 const app = express()
 
 app.use(cors())
 // Serves static pages from React build
-//app.use(express.static('build'))
+app.use(express.static('build'))
 app.use(express.json())
 
 const client = new Twitter({
@@ -17,19 +16,6 @@ const client = new Twitter({
     access_token_secret: process.env.ACCESS_TOKEN_SECRET,
     bearer_token: process.env.BEARER_TOKEN
 })
-
-let user_name = 'averywlittle'
-let sort_dir = 'descending'
-let sort_focus = 'favs'
-
-let params = {
-    user_id: user_name,
-    screen_name: user_name,
-    include_entities: false,
-    // We still want to include rts because we want to include quote tweets in our analysis
-    //include_rts: false,
-    count: 200
-}
 
 const getTweets = async (queryParams) => {
 
@@ -151,17 +137,17 @@ const merge = (left, right, comparator) => {
 }
 
 
-getTweets(params)
-    .then(result => {
-        console.log(`fetch success from user @${result.user.screen_name}, number of tweets: ${result.allTweets.length}`)
-        // filter our tweets of just plain retweets, but keep quote tweets
-        let tweetsWithoutRetweets = result.allTweets.filter(tweet => !tweet.retweeted_status)
-        let sortedArray = mergeSort(tweetsWithoutRetweets, dateComparator)
-        console.log('First:', sortedArray[0])
-        console.log('Second:', sortedArray[1])
-        console.log('Third:', sortedArray[2])
-    })
-    .catch(error => console.log(error))
+// getTweets(params)
+//     .then(result => {
+//         console.log(`fetch success from user @${result.user.screen_name}, number of tweets: ${result.allTweets.length}`)
+//         // filter our tweets of just plain retweets, but keep quote tweets
+//         let tweetsWithoutRetweets = result.allTweets.filter(tweet => !tweet.retweeted_status)
+//         let sortedArray = mergeSort(tweetsWithoutRetweets, dateComparator)
+//         console.log('First:', sortedArray[0])
+//         console.log('Second:', sortedArray[1])
+//         console.log('Third:', sortedArray[2])
+//     })
+//     .catch(error => console.log(error))
 
 
 
@@ -169,18 +155,30 @@ getTweets(params)
 
 
 
-app.get('/', (request, response) => {
-    response.send(`Hello world`)
-})
+// app.get('/', (request, response) => {
+//     response.send(`Hello world`)
+// })
 
-app.get('/api/query', (request, response) => {
-    getTweets(request.body.queryParams)
+app.post('/api/query/', (request, response) => {
+    
+    let params = {
+        user_id: request.body.screen_name,
+        screen_name: request.body.screen_name,
+        include_entities: false,
+        count: 200
+    }
+
+    getTweets(params)
         .then(result => {
-
+            console.log(`fetch success from user @${result.user.screen_name}, number of tweets: ${result.allTweets.length}`)
+            // filter our tweets of just plain retweets, but keep quote tweets
+            let tweetsWithoutRetweets = result.allTweets.filter(tweet => !tweet.retweeted_status)
+            // sort tweets
+            let sortedArray = mergeSort(tweetsWithoutRetweets, favoriteComparator)
+            
+            response.json({ tweets: sortedArray, user: result.user })
         })
-        .catch(error => {
-            console.log('error fetching user data', error)
-        })
+        .catch(error => console.log(error))
 })
 
 
