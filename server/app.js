@@ -6,7 +6,8 @@ const { response } = require('express')
 const app = express()
 
 app.use(cors())
-app.use(express.static('build'))
+// Serves static pages from React build
+//app.use(express.static('build'))
 app.use(express.json())
 
 const client = new Twitter({
@@ -25,6 +26,8 @@ let params = {
     user_id: user_name,
     screen_name: user_name,
     include_entities: false,
+    // We still want to include rts because we want to include quote tweets in our analysis
+    //include_rts: false,
     count: 200
 }
 
@@ -46,11 +49,13 @@ const getTweets = async (queryParams) => {
 
     let oldestTweetID = allTweets[allTweets.length-1].id
 
+    const user = allTweets[0].user
+
     while (newTweets.length > 0) {
         console.log(`getting tweets before ${oldestTweetID}`)
 
         // The next request is aligned using the previous request's oldest tweet id
-        newTweets = await client.get('statuses/user_timeline', { ...params, max_id: oldestTweetID })
+        newTweets = await client.get('statuses/user_timeline', { ...params, max_id: oldestTweetID, trim_user: true })
             .then(tweets => {
                 console.log('new tweets length', tweets.length)
                 let tweetTexts = tweets.map(tweet => tweet.text)
@@ -63,7 +68,12 @@ const getTweets = async (queryParams) => {
 
         if (newTweets.length <= 1) {
             break
-        }
+        } else {
+            // If duplicate tweet by id, slice the duplicated tweet out
+            if (allTweets[allTweets.length-1].id === newTweets[0].id) {
+                
+                newTweets = newTweets.slice(1)
+            }
 
         allTweets = allTweets.concat(newTweets)
         
@@ -72,13 +82,33 @@ const getTweets = async (queryParams) => {
         oldestTweetID = newTweets.reduce((oldestID, currentTweet) => currentTweet.id < oldestID ? currentTweet.id : oldestID.id)
 
         console.log(`${allTweets.length} tweets downloaded so far`)
+        }
     }
 
     console.log('all tweets length =', allTweets.length)
-    return allTweets
+    return { allTweets, user }
 }
 
-const mergeSort = (unsortedArray) => {
+const favoriteComparator = (left, right) => {
+    if (left.favorite_count > right.favorite_count) return true
+    else if (left.favorite_count <= right.favorite_count) return false
+}
+
+const dateComparator = (left, right) => {
+    // Convert to dates to enable comparisons
+    const leftDate = new Date(left.created_at)
+    const rightDate = new Date(right.created_at)
+
+    if (leftDate > rightDate) return true
+    else if (leftDate <= rightDate) return false
+}
+
+const reachComparator = (left, right) => {
+    if (left.retweet_count > right.retweet_count) return true
+    else if (left.retweet_count <= right.retweet_count) return false
+}
+
+const mergeSort = (unsortedArray, comparator) => {
     // No need to sort the array if the array only has one element or empty
     if (unsortedArray.length <= 1) {
         return unsortedArray
@@ -92,16 +122,18 @@ const mergeSort = (unsortedArray) => {
 
     // Using recursion to combine the left and right
     return merge(
-        mergeSort(left), mergeSort(right)
+        mergeSort(left, comparator), mergeSort(right, comparator), comparator
     )
 }
 
-const merge = (left, right) => {
+const merge = (left, right, comparator) => {
     let resultArray = [], leftIndex = 0, rightIndex = 0
 
     // Concatenate values to result array in order
     while (leftIndex < left.length && rightIndex < right.length) {
-        if (left[leftIndex].favorite_count > right[rightIndex].favorite_count) {
+
+        // [ ] Could run comparator here and flip boolean if sort_dir descending and leave if ascending
+        if (comparator(left[leftIndex], right[rightIndex])) {
             // [ ] Check for duplicates, retweets without text here
             resultArray.push(left[leftIndex]);
             leftIndex++; // move left array cursor
@@ -120,9 +152,11 @@ const merge = (left, right) => {
 
 
 getTweets(params)
-    .then(tweets => {
-        console.log(`fetch success from user ${user_name}, number of tweets: ${tweets.length}`)
-        let sortedArray = mergeSort(tweets)
+    .then(result => {
+        console.log(`fetch success from user @${result.user.screen_name}, number of tweets: ${result.allTweets.length}`)
+        // filter our tweets of just plain retweets, but keep quote tweets
+        let tweetsWithoutRetweets = result.allTweets.filter(tweet => !tweet.retweeted_status)
+        let sortedArray = mergeSort(tweetsWithoutRetweets, dateComparator)
         console.log('First:', sortedArray[0])
         console.log('Second:', sortedArray[1])
         console.log('Third:', sortedArray[2])

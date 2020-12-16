@@ -5,8 +5,9 @@
   "main": "app.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node app.js",
-    "dev": "nodemon app.js"
+    "start": "node server/app.js",
+    "dev": "nodemon server/app.js",
+    "build": "cd react-ui/ && npm install && npm run build"
   },
   "repository": {
     "type": "git",
