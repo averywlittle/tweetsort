@@ -1,18 +1,21 @@
 import React from 'react'
-import { TwitterTimelineEmbed, TwitterShareButton, TwitterFollowButton, TwitterHashtagButton, TwitterMentionButton, TwitterTweetEmbed, TwitterMomentShare, TwitterDMButton, TwitterVideoEmbed, TwitterOnAirButton } from 'react-twitter-embed'
+import { Tweet } from 'react-twitter-widgets'
 
 const ListTweets = (props) => {
 
-    let tweets = props.tweets
-    if(tweets.length === 0) console.log('empty tweets')
+    const tweets = props.tweets
     if(tweets.length === 0) return null
 
-    let content = tweets.map(tweet => 
+    // If page 1 => tweets 0 to 10
+    // If page 10 => tweets 100 to 110
+
+    const maxTweetIndex = props.page * 10
+
+    const renderedTweets = tweets.slice(maxTweetIndex - 10, maxTweetIndex)
+
+    const content = renderedTweets.map(tweet => 
         <div key={tweet.id}>
-            <TwitterTweetEmbed tweetId={tweet.id} crossorigin="anonymous" />
-            {tweet.text}
-            <p>Likes: {tweet.favorite_count}</p>
-            <p>Retweets: {tweet.retweet_count}</p>
+            <Tweet tweetId={tweet.id_str}/>
             <br></br>
         </div>
         )

@@ -4,8 +4,9 @@ import ListTweets from './ListTweets'
 import Loading from './Loading'
 import QueryTypeSelector from './QueryTypeSelector'
 import QueryOrderSelector from './QueryOrderSelector'
+import PageSelector from './PageSelector'
+import InfoPanel from './InfoPanel'
 import axios from 'axios'
-
 
 
 const App = () => {
@@ -13,7 +14,6 @@ const App = () => {
     const [ query, setQuery ] = useState("")
     const [ user, setUser ] = useState(null)
     const [ tweets, setTweets ] = useState([])
-    const [ renderedTweets, setRenderedTweets ] = useState([])
     const [ loading, setLoading ] = useState(false)
     const [ queryType, setQueryType ] = useState("favorites")
     const [ queryOrder, setQueryOrder ] = useState("desc")
@@ -33,9 +33,29 @@ const App = () => {
         setQueryOrder(event.target.value)
     }
 
-    // [ ] page up
-    // [ ] page down
-    // page cannot go lower than 1 or higher than tweets.length/10
+    // page cannot go lower than 1 or higher than tweets.length/10 + 1
+    const handlePageUp = (event) => {
+        event.preventDefault()
+        if (tweets.length !== 0) {
+
+            if (page <= (Math.ceil(tweets.length/10))) {
+                setPage(page + 1)
+            }
+            else console.log('Page maximum')
+        }
+        console.log('Page', page)
+    }
+
+    const handlePageDown = (event) => {
+        event.preventDefault()
+        if (tweets.length !== 0) {
+            if (page !== 1) {
+                setPage(page - 1)
+            }
+            else console.log('Page minimum')
+        }
+        console.log('Page', page)
+    }
 
     const queryTweets = () => {
         console.log('query', query)
@@ -50,11 +70,9 @@ const App = () => {
                 console.log('tweets returned', response.data.tweets.length)
                 setUser(response.data.user)
                 setTweets(response.data.tweets)
-                const firstRender = tweets.slice(10)
-                setRenderedTweets(firstRender)
-                console.log(renderedTweets)
                 setLoading(false)
             })
+            .catch(error => console.log('POST ERROR', error))
 
     }
 
@@ -65,7 +83,9 @@ const App = () => {
             <QueryOrderSelector queryOrder={queryOrder} handleQueryOrderChange={handleQueryOrderChange}/>
             <QueryForm query={query} handleQueryChange={handleQueryChange} queryTweets={queryTweets}/>
             <Loading loading={loading}/>
-            <ListTweets tweets={tweets}/>
+            <InfoPanel tweetsLength={tweets.length} page={page} maxPage={Math.ceil(tweets.length/10)}/>
+            <ListTweets tweets={tweets} page={page}/>
+            <PageSelector page={page} handlePageUp={handlePageUp} handlePageDown={handlePageDown} tweetsLength={tweets.length}/>
         </div>
     )
 }

@@ -12,14 +12,36 @@ code {
     monospace;
 }
 
-#root {
+.interactables {
+  padding: 2px;
+}
+
+.pagers {
   margin: auto;
-  width: 60%;
+  width: 30%;
   padding: 10px;
 }
 
-/**
-* [ ] style button
-* [ ] style text input
-* [ ] style selectors
-*/
+@media (max-width: 1000px) {
+  #root {
+    margin: auto;
+    width: 30%;
+    padding: 10px;
+  }
+}
+
+@media (max-width: 800px) {
+  #root {
+    margin: auto;
+    width: 50%;
+    padding: 10px;
+  }
+}
+
+@media (max-width: 799px) {
+  #root {
+    margin: auto;
+    width: 80%;
+    padding: 5px;
+  }
+}
