@@ -13,9 +13,11 @@ const App = () => {
     const [ query, setQuery ] = useState("")
     const [ user, setUser ] = useState(null)
     const [ tweets, setTweets ] = useState([])
+    const [ renderedTweets, setRenderedTweets ] = useState([])
     const [ loading, setLoading ] = useState(false)
     const [ queryType, setQueryType ] = useState("favorites")
     const [ queryOrder, setQueryOrder ] = useState("desc")
+    const [ page, setPage ] = useState(1)
 
     const handleQueryChange = (event) =>  {
         setQuery(event.target.value)
@@ -31,6 +33,10 @@ const App = () => {
         setQueryOrder(event.target.value)
     }
 
+    // [ ] page up
+    // [ ] page down
+    // page cannot go lower than 1 or higher than tweets.length/10
+
     const queryTweets = () => {
         console.log('query', query)
         setLoading(true)
@@ -41,8 +47,12 @@ const App = () => {
         axios.post('/api/query/', queryObject)
             .then(response => {
                 console.log(response.data.user)
+                console.log('tweets returned', response.data.tweets.length)
                 setUser(response.data.user)
                 setTweets(response.data.tweets)
+                const firstRender = tweets.slice(10)
+                setRenderedTweets(firstRender)
+                console.log(renderedTweets)
                 setLoading(false)
             })
 
