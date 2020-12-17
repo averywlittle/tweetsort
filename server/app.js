@@ -9,6 +9,7 @@ app.use(cors())
 app.use(express.static('build'))
 app.use(express.json())
 
+
 const client = new Twitter({
     consumer_key: process.env.API_KEY,
     consumer_secret: process.env.API_KEY_SECRET,
@@ -41,7 +42,7 @@ const getTweets = async (queryParams) => {
         console.log(`getting tweets before ${oldestTweetID}`)
 
         // The next request is aligned using the previous request's oldest tweet id
-        newTweets = await client.get('statuses/user_timeline', { ...params, max_id: oldestTweetID, trim_user: true })
+        newTweets = await client.get('statuses/user_timeline', { ...queryParams, max_id: oldestTweetID, trim_user: true })
             .then(tweets => {
                 console.log('new tweets length', tweets.length)
                 let tweetTexts = tweets.map(tweet => tweet.text)
@@ -137,36 +138,21 @@ const merge = (left, right, comparator) => {
 }
 
 
-// getTweets(params)
-//     .then(result => {
-//         console.log(`fetch success from user @${result.user.screen_name}, number of tweets: ${result.allTweets.length}`)
-//         // filter our tweets of just plain retweets, but keep quote tweets
-//         let tweetsWithoutRetweets = result.allTweets.filter(tweet => !tweet.retweeted_status)
-//         let sortedArray = mergeSort(tweetsWithoutRetweets, dateComparator)
-//         console.log('First:', sortedArray[0])
-//         console.log('Second:', sortedArray[1])
-//         console.log('Third:', sortedArray[2])
-//     })
-//     .catch(error => console.log(error))
-
-
 
 //////////
 
-
-
-// app.get('/', (request, response) => {
-//     response.send(`Hello world`)
-// })
-
 app.post('/api/query/', (request, response) => {
+
+    console.log('body', request.body)
     
     let params = {
-        user_id: request.body.screen_name,
-        screen_name: request.body.screen_name,
+        user_id: request.body.query,
+        screen_name: request.body.query,
         include_entities: false,
         count: 200
     }
+
+    console.log('query for:', request.body.query)
 
     getTweets(params)
         .then(result => {
