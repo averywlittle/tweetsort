@@ -95,7 +95,7 @@ const reachComparator = (left, right) => {
     else if (left.retweet_count <= right.retweet_count) return false
 }
 
-const mergeSort = (unsortedArray, comparator) => {
+const mergeSort = (unsortedArray, mergeParams) => {
     // No need to sort the array if the array only has one element or empty
     if (unsortedArray.length <= 1) {
         return unsortedArray
@@ -109,23 +109,27 @@ const mergeSort = (unsortedArray, comparator) => {
 
     // Using recursion to combine the left and right
     return merge(
-        mergeSort(left, comparator), mergeSort(right, comparator), comparator
+        mergeSort(left, mergeParams), mergeSort(right, mergeParams), mergeParams
     )
 }
 
-const merge = (left, right, comparator) => {
+const merge = (left, right, mergeParams) => {
     let resultArray = [], leftIndex = 0, rightIndex = 0
 
     // Concatenate values to result array in order
     while (leftIndex < left.length && rightIndex < right.length) {
 
-        // [ ] Could run comparator here and flip boolean if sort_dir descending and leave if ascending
-        if (comparator(left[leftIndex], right[rightIndex])) {
-            // [ ] Check for duplicates, retweets without text here
+        let comparison = mergeParams.comparator(left[leftIndex], right[rightIndex])
+
+        // Already returned in descending order, so just flip if ascending was sent
+        if (mergeParams.order === "asc") {
+            comparison = !comparison
+        }
+
+        if (comparison) {
             resultArray.push(left[leftIndex]);
             leftIndex++; // move left array cursor
           } else {
-            // [ ] Check for duplicates, retweets without text here
             resultArray.push(right[rightIndex]);
             rightIndex++; // move right array cursor
           }
@@ -152,7 +156,25 @@ app.post('/api/query/', (request, response) => {
         count: 200
     }
 
-    console.log('query for:', request.body.query)
+    const mergeParams = {
+        order: request.body.queryOrder
+    }
+
+    switch (request.body.queryType) {
+        case "favorites":
+            mergeParams.comparator = favoriteComparator
+            break;
+
+        case "retweets":
+            mergeParams.comparator = reachComparator
+            break;
+
+        case "date":
+            mergeParams.comparator = dateComparator
+            break;
+        default:
+            break;
+    }
 
     getTweets(params)
         .then(result => {
@@ -160,7 +182,7 @@ app.post('/api/query/', (request, response) => {
             // filter our tweets of just plain retweets, but keep quote tweets
             let tweetsWithoutRetweets = result.allTweets.filter(tweet => !tweet.retweeted_status)
             // sort tweets
-            let sortedArray = mergeSort(tweetsWithoutRetweets, favoriteComparator)
+            let sortedArray = mergeSort(tweetsWithoutRetweets, mergeParams)
             
             response.json({ tweets: sortedArray, user: result.user })
         })
