@@ -4,7 +4,7 @@ const byFavorites = (left, right) => {
     else if (left.favorite_count <= right.favorite_count) return false
 }
 
-const byDates = (left, right) => {
+const byDate = (left, right) => {
     // Convert to dates to enable comparisons
     const leftDate = new Date(left.created_at)
     const rightDate = new Date(right.created_at)
@@ -18,5 +18,5 @@ const byReach = (left, right) => {
     else if (left.retweet_count <= right.retweet_count) return false
 }
 
-exports.options = { byFavorites, byDates, byReach }
+exports.options = { byFavorites, byDate, byReach }
 
