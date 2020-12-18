@@ -44,7 +44,7 @@ const App = () => {
         event.preventDefault()
         if (tweets.length !== 0) {
 
-            if (page <= (Math.ceil(tweets.length/10))) {
+            if (page < (Math.ceil(tweets.length/10))) {
                 setPage(page + 1)
             }
             else console.log('Page maximum')
