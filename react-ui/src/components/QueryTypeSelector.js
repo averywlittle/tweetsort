@@ -1,10 +1,10 @@
 import React from 'react'
 
 const QueryTypeSelector = (props) => (
-    <form class="interactables">
+    <form className="interactables">
         <label>
             Sort by 
-            <select value={props.QueryType} onChange={props.handleQueryTypeChange}>
+            <select className="selectButtons" value={props.QueryType} onChange={props.handleQueryTypeChange}>
                 <option value="favorites">Likes</option>
                 <option value="retweets">Reach</option>
                 <option value="date">Date</option>

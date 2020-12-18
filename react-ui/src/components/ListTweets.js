@@ -14,7 +14,7 @@ const ListTweets = (props) => {
     const renderedTweets = tweets.slice(maxTweetIndex - 10, maxTweetIndex)
 
     const content = renderedTweets.map(tweet => 
-        <div key={tweet.id}>
+        <div className="tweet" key={tweet.id}>
             <Tweet tweetId={tweet.id_str}/>
             <br></br>
         </div>

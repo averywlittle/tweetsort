@@ -6,10 +6,10 @@ const PageSelector = (props) => {
     }
 
     return (
-    <div class="pagers">
-        <button onClick={props.handlePageDown} type="submit" class="interactables">Page Down</button>
+    <div className="pagers">
+        <button className="styledPagerButtons" onClick={props.handlePageDown} type="submit">Previous Page</button>
         {props.page}
-        <button onClick={props.handlePageUp} type="submit" class="interactables">Page Up</button>
+        <button className="styledPagerButtons" onClick={props.handlePageUp} type="submit">Next Page</button>
     </div>
     )
 }

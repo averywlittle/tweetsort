@@ -13,26 +13,117 @@ code {
 }
 
 .interactables {
-  padding: 2px;
+  padding: 3px;
+}
+
+.queryBar {
+  color: black;
+  border-top: none;
+  border-left: none;
+  border-right: none;
+  border-bottom-color: rgb(49, 49, 49);
+  border-bottom-width: 2px;
+  border-bottom-style: solid;
+  margin: 3px;
+  height: 20px;
+  font-size: medium;
+}
+
+.selectButtons {
+  color: black;
+  background-color: #f8f8f8;
+  width: auto;
+  height: 30px;
+  border: none;
+  border-radius: 4px;
+  margin: 3px;
+  cursor: pointer;
+  -webkit-box-shadow: 0 3px 0 #ccc, 0 -1px #fff inset;
+  -moz-box-shadow: 0 3px 0 #ccc, 0 -1px #fff inset;
+  box-shadow: 0 3px 0 #ccc, 0 -1px #fff inset;
+  -moz-appearance:none; /* Firefox */
+  -webkit-appearance:none; /* Safari and Chrome */
+  appearance:none;
+  display: inline-block;
+}
+
+/* Targetting Webkit browsers only. FF will show the dropdown arrow with so much padding. */
+@media screen and (-webkit-min-device-pixel-ratio:0) {
+  select {padding-right:20px}
+}
+
+label {position:relative}
+label:after {
+    content:'<>';
+    font:11px "Consolas", monospace;
+    color:#aaa;
+    -webkit-transform:rotate(90deg);
+    -moz-transform:rotate(90deg);
+    -ms-transform:rotate(90deg);
+    transform:rotate(90deg);
+    right:8px; top:2px;
+    padding:0 0 2px;
+    border-bottom:1px solid #ddd;
+    position:absolute;
+    pointer-events:none;
+}
+label:before {
+    content:'';
+    right:6px; top:0px;
+    width:20px; height:20px;
+    background:#f8f8f8;
+    position:absolute;
+    pointer-events:none;
+    display:block;
+}
+
+.styledButtons {
+  color: black;
+  background-color: #f8f8f8;
+  margin: 5px;
+  width: 150px;
+  height: 35px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  -webkit-box-shadow: 0 3px 0 #ccc, 0 -1px #fff inset;
+  -moz-box-shadow: 0 3px 0 #ccc, 0 -1px #fff inset;
+  box-shadow: 0 3px 0 #ccc, 0 -1px #fff inset;
+
+}
+
+.styledPagerButtons {
+  color: black;
+  background-color: #f8f8f8;
+  margin: 5px;
+  width: 110px;
+  height: 35px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  -webkit-box-shadow: 0 3px 0 #ccc, 0 -1px #fff inset;
+  -moz-box-shadow: 0 3px 0 #ccc, 0 -1px #fff inset;
+  box-shadow: 0 3px 0 #ccc, 0 -1px #fff inset;
+
 }
 
 .pagers {
-  margin: auto;
-  width: 30%;
-  padding: 10px;
+  margin: 0 auto;
+  width: 55%;
+  padding-bottom: 10px;
 }
 
-@media (max-width: 1000px) {
+@media (min-width: 1250px) {
   #root {
-    margin: auto;
+    margin: 0 auto;
     width: 30%;
     padding: 10px;
   }
 }
 
-@media (max-width: 800px) {
+@media (max-width: 1249px) {
   #root {
-    margin: auto;
+    margin: 0 auto;
     width: 50%;
     padding: 10px;
   }
@@ -40,8 +131,57 @@ code {
 
 @media (max-width: 799px) {
   #root {
-    margin: auto;
-    width: 80%;
+    margin: 0 auto;
+    width: 90%;
     padding: 5px;
   }
+
+  .pagers {
+    margin: 0 auto;
+    width: 65%;
+    padding-bottom: 10px;
+  }
+}
+
+@media (max-width: 430px) {
+  .pagers {
+    margin: 0 auto;
+    width: 75%;
+    padding-bottom: 10px;
+  }
+}
+
+@media (max-width: 370px) {
+  .pagers {
+    margin: 0 auto;
+    width: 85%;
+    padding-bottom: 10px;
+  }
+}
+
+.tweet {
+  margin-left: 2px;
+  margin-right: 2px;
+}
+
+.errorMessage {
+  background-color: rgba(255, 0, 0, 0.055);
+  color: red;
+  padding: 1px;
+  padding-left: 20px;
+  padding-right: 20px;
+  margin: 2px;
+  border-radius: 5px;
+  vertical-align: middle;
+}
+
+.successMessage {
+  background-color: rgba(51, 255, 0, 0.068);
+  color: green;
+  padding: 1px;
+  padding-left: 20px;
+  padding-right: 20px;
+  margin: 2px;
+  border-radius: 5px;
+  vertical-align: middle;
 }

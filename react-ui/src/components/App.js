@@ -18,9 +18,15 @@ const App = () => {
     const [ queryType, setQueryType ] = useState("favorites")
     const [ queryOrder, setQueryOrder ] = useState("desc")
     const [ page, setPage ] = useState(1)
+    const [ error, setError ] = useState(null)
 
     const handleQueryChange = (event) =>  {
         setQuery(event.target.value)
+
+        if (event.target.value.length === 0) {
+            setTweets([])
+            setError(null)
+        }
     }
 
     const handleQueryTypeChange = (event) => {
@@ -43,7 +49,6 @@ const App = () => {
             }
             else console.log('Page maximum')
         }
-        console.log('Page', page)
     }
 
     const handlePageDown = (event) => {
@@ -54,26 +59,34 @@ const App = () => {
             }
             else console.log('Page minimum')
         }
-        console.log('Page', page)
     }
 
     const queryTweets = () => {
         console.log('query', query)
-        setLoading(true)
+        if (query.length > 0) {
+            setError(null)
+            setLoading(true)
 
-        const queryObject = { query, queryType, queryOrder }
+            const queryObject = { query, queryType, queryOrder }
 
-        // post request because we need to send some data to form the query params
-        axios.post('/api/query/', queryObject)
-            .then(response => {
-                console.log(response.data.user)
-                console.log('tweets returned', response.data.tweets.length)
-                setUser(response.data.user)
-                setTweets(response.data.tweets)
-                setLoading(false)
-            })
-            .catch(error => console.log('POST ERROR', error))
-
+            // post request because we need to send some data to form the query params
+            axios.post('/api/query/', queryObject)
+                .then(response => {
+                    console.log(response.data.user)
+                    console.log('tweets returned', response.data.tweets.length)
+                    setUser(response.data.user)
+                    setQuery(response.data.user.screen_name)
+                    setTweets(response.data.tweets)
+                    setPage(1)
+                    setLoading(false)
+                })
+                .catch(error => {
+                    console.log('POST ERROR', error)
+                    setError(error)
+                    setLoading(false)
+                    setTweets([])
+                })
+        }
     }
 
     return (
@@ -83,7 +96,7 @@ const App = () => {
             <QueryOrderSelector queryOrder={queryOrder} handleQueryOrderChange={handleQueryOrderChange}/>
             <QueryForm query={query} handleQueryChange={handleQueryChange} queryTweets={queryTweets}/>
             <Loading loading={loading}/>
-            <InfoPanel tweetsLength={tweets.length} page={page} maxPage={Math.ceil(tweets.length/10)}/>
+            <InfoPanel tweetsLength={tweets.length} page={page} maxPage={Math.ceil(tweets.length/10)} error={error}/>
             <ListTweets tweets={tweets} page={page}/>
             <PageSelector page={page} handlePageUp={handlePageUp} handlePageDown={handlePageDown} tweetsLength={tweets.length}/>
         </div>
