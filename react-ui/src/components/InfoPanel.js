@@ -20,7 +20,8 @@ const ListTweets = (props) => {
             <p>A loading symbol will show while the tweets are being fetched. If this area is empty (not even this welcome message) it means the tweets are being rendered :)</p>
             <p>If you enjoy this little tool, follow me <a href="https://twitter.com/averywlittle" target="_blank" rel="noreferrer">@averywlittle</a>.</p>
             <p>The code, along with more information, is available <a href="https://github.com/averywlittle/tweetsort" target="_blank" rel="noreferrer">here</a>.</p>
-        </div>
+            <p>If you super enjoy the tool, <a href="https://www.buymeacoffee.com/YVNfaW6q5" target="_blank" rel="noreferrer">buy me a coffee!</a></p>
+            </div>
         )
     } else {
         return (
