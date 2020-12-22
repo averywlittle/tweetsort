@@ -8,7 +8,7 @@ valuable input from the past. Search is great if you know the syntax for command
 I've found that users that thread a lot will resurface their own valuable tweets. What about users that don't do that? This tool seeks to enable people to seek out valuable past
 tweets from people they want to learn more from.
 
-This is available at www.tweetsort.io.
+This is available at https://www.tweetsort.io/.
 
 Challenges:
 Getting a user's tweets (API only returns ~200 at a time)
