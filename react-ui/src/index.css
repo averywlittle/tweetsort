@@ -45,6 +45,7 @@ code {
   -webkit-appearance:none; /* Safari and Chrome */
   appearance:none;
   display: inline-block;
+  padding: 0 25px 0 5px;
 }
 
 /* Targetting Webkit browsers only. FF will show the dropdown arrow with so much padding. */
