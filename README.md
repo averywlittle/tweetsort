@@ -1,6 +1,8 @@
 # TweetSort
 A tool to sort through a user's tweets.
 
+# HEADS UP: THIS PROJECT IS DEPRECATED AND THE CODE IS UP FOR EDUCATIONAL PURPOSES ONLY
+
 The reason I wish this existed is because I love lurking through the top of all time on Reddit. I want to provide that experience on Twitter.
 There are so many talented and experienced people on the site sharing their expertise, insight, or humor. Twitter's ephemeral nature prevents us from seeing a user's
 valuable input from the past. Search is great if you know the syntax for commands, but is also dependent on you as a user knowing what content you're looking for.
